@@ -1,0 +1,3120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="RFGN — Reinforced Federated Graph Network for intelligent financial fraud detection."
+    >
+
+    <title>
+        RFGN | Reinforced Federated Graph Network
+    </title>
+
+
+    <style>
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            min-height: 100vh;
+
+            background:
+                #010407;
+
+            color: #ffffff;
+
+            font-family:
+                "Segoe UI",
+                Inter,
+                Arial,
+                sans-serif;
+
+            overflow-x: hidden;
+        }
+
+
+        button,
+        a {
+            font-family: inherit;
+        }
+
+
+        button {
+            border: none;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        /* =========================================================
+           VARIABLES
+        ========================================================= */
+
+        :root {
+
+            --black:
+                #010407;
+
+            --deep-black:
+                #02070d;
+
+            --navy:
+                #03101b;
+
+            --blue:
+                #168cff;
+
+            --cyan:
+                #20c8ff;
+
+            --light-blue:
+                #75d9ff;
+
+            --silver:
+                #dbe6ee;
+
+            --white:
+                #f7fbff;
+
+            --green:
+                #00ff72;
+
+            --glass:
+                rgba(3, 15, 25, 0.62);
+
+            --glass-strong:
+                rgba(3, 15, 26, 0.82);
+
+            --border:
+                rgba(50, 173, 235, 0.27);
+
+            --border-bright:
+                rgba(50, 184, 255, 0.68);
+
+        }
+
+
+        /* =========================================================
+           MATRIX RAIN
+        ========================================================= */
+
+        #matrixCanvas {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100vw;
+            height: 100vh;
+
+            pointer-events: none;
+
+            z-index: 10;
+
+            opacity: 0.48;
+        }
+
+
+        /* =========================================================
+           GLOBAL GLOW
+        ========================================================= */
+
+        .global-glow {
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 2;
+
+            background:
+
+                radial-gradient(
+                    circle at 72% 52%,
+                    rgba(0, 132, 255, 0.08),
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 30% 75%,
+                    rgba(0, 95, 180, 0.06),
+                    transparent 35%
+                );
+
+        }
+
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================= */
+
+        .navbar {
+
+            position: fixed;
+
+            top: 43px;
+
+            left: 38px;
+            right: 38px;
+
+            height: 80px;
+
+            z-index: 100;
+
+            display: flex;
+
+            align-items: center;
+
+            padding:
+                0 18px 0 28px;
+
+            background:
+
+                linear-gradient(
+                    110deg,
+                    rgba(7, 24, 37, 0.88),
+                    rgba(2, 11, 18, 0.76)
+                );
+
+            border:
+                1px solid
+                rgba(53, 171, 228, 0.32);
+
+            backdrop-filter:
+                blur(18px);
+
+            -webkit-backdrop-filter:
+                blur(18px);
+
+            box-shadow:
+
+                0 12px 50px
+                rgba(0, 0, 0, 0.46),
+
+                inset 0 0 35px
+                rgba(28, 155, 225, 0.035);
+
+        }
+
+
+        .navbar::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 1px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(80, 205, 255, 0.72),
+                    transparent
+                );
+
+        }
+
+
+        /* =========================================================
+           NAV LOGO
+        ========================================================= */
+
+        .nav-logo {
+
+            width: 205px;
+            height: 74px;
+
+            display: flex;
+
+            align-items: center;
+
+            overflow: hidden;
+
+            flex-shrink: 0;
+        }
+
+
+        .nav-logo img {
+
+            width: 175px;
+
+            height: auto;
+
+            display: block;
+
+            object-fit: contain;
+
+            filter:
+
+                drop-shadow(
+                    0 0 8px
+                    rgba(80, 190, 255, 0.35)
+                );
+
+            mix-blend-mode: screen;
+
+        }
+
+
+        /* =========================================================
+           NAV LINKS
+        ========================================================= */
+
+        .nav-links {
+
+            flex: 1;
+
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 52px;
+        }
+
+
+        .nav-link {
+
+            position: relative;
+
+            color:
+                rgba(240, 247, 252, 0.86);
+
+            font-size: 15px;
+
+            font-weight: 500;
+
+            letter-spacing:
+                0.5px;
+
+            transition:
+                color 0.25s ease,
+                text-shadow 0.25s ease;
+        }
+
+
+        .nav-link:hover {
+
+            color:
+                var(--cyan);
+
+            text-shadow:
+                0 0 13px
+                rgba(30, 190, 255, 0.55);
+
+        }
+
+
+        .nav-link.active {
+
+            color:
+                var(--cyan);
+        }
+
+
+        .nav-link.active::after {
+
+            content: "";
+
+            position: absolute;
+
+            left: 50%;
+
+            bottom: -27px;
+
+            transform:
+                translateX(-50%);
+
+            width: 46px;
+
+            height: 2px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--cyan),
+                    transparent
+                );
+
+            box-shadow:
+                0 0 12px
+                var(--cyan);
+
+        }
+
+
+        /* =========================================================
+           SYSTEM STATUS
+        ========================================================= */
+
+        .system-status {
+
+            width: 220px;
+
+            height: 62px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 14px;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    rgba(6, 25, 40, 0.90),
+                    rgba(3, 14, 24, 0.78)
+                );
+
+            border:
+                1px solid
+                rgba(70, 179, 239, 0.38);
+
+            clip-path:
+
+                polygon(
+                    12px 0,
+                    calc(100% - 12px) 0,
+                    100% 12px,
+                    100% calc(100% - 12px),
+                    calc(100% - 12px) 100%,
+                    12px 100%,
+                    0 calc(100% - 12px),
+                    0 12px
+                );
+
+        }
+
+
+        .status-dot {
+
+            width: 12px;
+            height: 12px;
+
+            border-radius: 50%;
+
+            background:
+                #218fff;
+
+            box-shadow:
+
+                0 0 8px
+                #168cff,
+
+                0 0 22px
+                rgba(22, 140, 255, 0.65);
+
+        }
+
+
+        .status-content {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+
+        }
+
+
+        .status-label {
+
+            font-size: 11px;
+
+            color:
+                rgba(235, 242, 247, 0.67);
+
+            letter-spacing:
+                0.8px;
+
+        }
+
+
+        .status-value {
+
+            font-size: 13px;
+
+            color:
+                var(--cyan);
+
+            letter-spacing:
+                1px;
+
+            text-shadow:
+                0 0 10px
+                rgba(30, 190, 255, 0.45);
+
+        }
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .hero {
+
+            position: relative;
+
+            width: 100%;
+
+            min-height: 100vh;
+
+            overflow: hidden;
+
+            z-index: 3;
+
+            display: flex;
+
+            align-items: center;
+
+            background:
+                #010407;
+        }
+
+
+        /* =========================================================
+           EARTH BACKGROUND
+        ========================================================= */
+
+        .hero-background {
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: -5;
+
+            background-image:
+
+                url(
+                    "assets/Earth%20Background.png"
+                );
+
+            background-repeat:
+                no-repeat;
+
+            background-size:
+                cover;
+
+            background-position:
+                center center;
+
+            filter:
+
+                brightness(0.82)
+                contrast(1.08)
+                saturate(1.08);
+
+        }
+
+
+        /* =========================================================
+           CINEMATIC OVERLAY
+        ========================================================= */
+
+        .hero-overlay {
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: -4;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    rgba(0, 3, 7, 0.94) 0%,
+                    rgba(0, 4, 8, 0.82) 29%,
+                    rgba(0, 5, 9, 0.38) 52%,
+                    rgba(0, 4, 8, 0.08) 75%,
+                    rgba(0, 2, 6, 0.22) 100%
+                );
+
+        }
+
+
+        .hero-bottom-overlay {
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: -3;
+
+            background:
+
+                linear-gradient(
+                    180deg,
+                    rgba(0,0,0,0.10) 0%,
+                    transparent 45%,
+                    rgba(0,0,0,0.45) 100%
+                );
+
+        }
+
+
+        /* =========================================================
+           HERO CONTENT
+        ========================================================= */
+
+        .hero-content {
+
+            position: relative;
+
+            z-index: 20;
+
+            width:
+                min(
+                    1500px,
+                    calc(100% - 100px)
+                );
+
+            margin:
+                0 auto;
+
+            padding-top:
+                55px;
+
+        }
+
+
+        .hero-left {
+
+            width: 610px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+        }
+
+
+        /* =========================================================
+           HERO LOGO
+        ========================================================= */
+
+        .hero-logo {
+
+            width: 590px;
+
+            height: auto;
+
+            display: block;
+
+            object-fit: contain;
+
+            filter:
+
+                drop-shadow(
+                    0 0 9px
+                    rgba(210, 235, 255, 0.25)
+                )
+
+                drop-shadow(
+                    0 0 25px
+                    rgba(0, 130, 255, 0.22)
+                );
+
+            mix-blend-mode: screen;
+
+        }
+
+
+        /* =========================================================
+           SUBTITLE
+        ========================================================= */
+
+        .hero-subtitle {
+
+            margin-top:
+                5px;
+
+            font-size:
+                16px;
+
+            font-weight:
+                400;
+
+            letter-spacing:
+                5px;
+
+            color:
+                rgba(230, 238, 245, 0.82);
+
+            white-space:
+                nowrap;
+
+        }
+
+
+        /* =========================================================
+           HEADLINE
+        ========================================================= */
+
+        .hero-title {
+
+            margin-top:
+                30px;
+
+            font-size:
+                37px;
+
+            line-height:
+                1.35;
+
+            font-weight:
+                300;
+
+            letter-spacing:
+                6px;
+
+            color:
+                rgba(237, 243, 248, 0.94);
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        .hero-title strong {
+
+            display:
+                block;
+
+            font-weight:
+                400;
+
+            color:
+                #54b4ff;
+
+            text-shadow:
+
+                0 0 18px
+                rgba(35, 157, 255, 0.28);
+
+        }
+
+
+        /* =========================================================
+           DIVIDER
+        ========================================================= */
+
+        .hero-divider {
+
+            position:
+                relative;
+
+            width:
+                545px;
+
+            height:
+                1px;
+
+            margin-top:
+                18px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    rgba(32, 160, 255, 0.95),
+                    rgba(32, 160, 255, 0.52),
+                    transparent
+                );
+
+            box-shadow:
+
+                0 0 10px
+                rgba(30, 150, 255, 0.35);
+
+        }
+
+
+        .hero-divider::after {
+
+            content: "";
+
+            position:
+                absolute;
+
+            top:
+                50%;
+
+            left:
+                50%;
+
+            width:
+                9px;
+
+            height:
+                9px;
+
+            transform:
+
+                translate(
+                    -50%,
+                    -50%
+                )
+                rotate(45deg);
+
+            background:
+                #1d9fff;
+
+            border:
+                1px solid
+                #9bdfff;
+
+            box-shadow:
+                0 0 10px
+                #1d9fff;
+
+        }
+
+
+        /* =========================================================
+           DESCRIPTION
+        ========================================================= */
+
+        .hero-description {
+
+            width:
+                550px;
+
+            margin-top:
+                25px;
+
+            font-size:
+                16.5px;
+
+            line-height:
+                1.78;
+
+            font-weight:
+                350;
+
+            color:
+                rgba(216, 226, 234, 0.76);
+
+        }
+
+
+        /* =========================================================
+           BUTTONS
+        ========================================================= */
+
+        .hero-actions {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                32px;
+
+            margin-top:
+                28px;
+
+        }
+
+
+        .cta {
+
+            position:
+                relative;
+
+            height:
+                70px;
+
+            padding:
+                0 28px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                16px;
+
+            cursor:
+                pointer;
+
+            color:
+                #ffffff;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    rgba(8, 53, 84, 0.88),
+                    rgba(3, 19, 32, 0.86)
+                );
+
+            border:
+                1px solid
+                rgba(42, 174, 255, 0.72);
+
+            clip-path:
+
+                polygon(
+                    12px 0,
+                    calc(100% - 40px) 0,
+                    100% 18px,
+                    100% calc(100% - 14px),
+                    calc(100% - 15px) 100%,
+                    15px 100%,
+                    0 calc(100% - 15px),
+                    0 14px
+                );
+
+            transition:
+
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                background 0.25s ease;
+
+        }
+
+
+        .cta:hover {
+
+            transform:
+                translateY(-3px);
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    rgba(9, 74, 119, 0.94),
+                    rgba(4, 24, 41, 0.94)
+                );
+
+            box-shadow:
+
+                0 0 28px
+                rgba(25, 155, 255, 0.28);
+
+        }
+
+
+        .cta-primary {
+
+            width:
+                350px;
+
+        }
+
+
+        .cta-secondary {
+
+            width:
+                270px;
+
+            border-color:
+                rgba(122, 195, 232, 0.44);
+
+            background:
+                rgba(4, 17, 29, 0.75);
+
+        }
+
+
+        .cta-arrow {
+
+            font-size:
+                27px;
+
+            color:
+                var(--cyan);
+
+            line-height:
+                1;
+
+        }
+
+
+        .play-icon {
+
+            width:
+                35px;
+
+            height:
+                35px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                50%;
+
+            border:
+                1px solid
+                rgba(77, 191, 255, 0.82);
+
+            font-size:
+                12px;
+
+            color:
+                #ffffff;
+
+            box-shadow:
+
+                inset 0 0 10px
+                rgba(30, 160, 255, 0.12),
+
+                0 0 10px
+                rgba(30, 160, 255, 0.18);
+
+        }
+
+
+        /* =========================================================
+           SECURITY
+        ========================================================= */
+
+        .security-statement {
+
+            position:
+                absolute;
+
+            left:
+                68px;
+
+            bottom:
+                63px;
+
+            z-index:
+                25;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                13px;
+
+            font-size:
+                14px;
+
+            letter-spacing:
+                2px;
+
+            color:
+                rgba(235, 242, 247, 0.72);
+
+        }
+
+
+        .security-icon {
+
+            width:
+                24px;
+
+            height:
+                28px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border:
+                1px solid
+                rgba(235, 243, 248, 0.60);
+
+            clip-path:
+
+                polygon(
+                    50% 0,
+                    100% 16%,
+                    88% 78%,
+                    50% 100%,
+                    12% 78%,
+                    0 16%
+                );
+
+            font-size:
+                10px;
+
+        }
+
+
+        .security-private {
+
+            color:
+                var(--cyan);
+
+        }
+
+
+        /* =========================================================
+           SCROLL
+        ========================================================= */
+
+        .scroll-indicator {
+
+            position:
+                absolute;
+
+            left:
+                50%;
+
+            bottom:
+                23px;
+
+            transform:
+                translateX(-50%);
+
+            z-index:
+                25;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            align-items:
+                center;
+
+            gap:
+                11px;
+
+            color:
+                rgba(238, 244, 248, 0.76);
+
+            font-size:
+                11px;
+
+            letter-spacing:
+                3px;
+
+        }
+
+
+        .mouse {
+
+            width:
+                26px;
+
+            height:
+                43px;
+
+            border:
+                1px solid
+                rgba(53, 183, 255, 0.88);
+
+            border-radius:
+                15px;
+
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            padding-top:
+                8px;
+
+            box-shadow:
+
+                0 0 13px
+                rgba(20, 150, 255, 0.25);
+
+        }
+
+
+        .mouse::before {
+
+            content:
+                "";
+
+            width:
+                3px;
+
+            height:
+                8px;
+
+            border-radius:
+                3px;
+
+            background:
+                var(--cyan);
+
+            box-shadow:
+                0 0 8px
+                var(--cyan);
+
+            animation:
+                scrollMove 1.7s
+                ease-in-out
+                infinite;
+
+        }
+
+
+        @keyframes scrollMove {
+
+            0% {
+
+                transform:
+                    translateY(0);
+
+                opacity:
+                    1;
+            }
+
+            70% {
+
+                transform:
+                    translateY(13px);
+
+                opacity:
+                    0.2;
+            }
+
+            100% {
+
+                transform:
+                    translateY(0);
+
+                opacity:
+                    1;
+            }
+
+        }
+
+
+        /* =========================================================
+           LOWER SECTIONS
+        ========================================================= */
+
+        .section {
+
+            position:
+                relative;
+
+            min-height:
+                80vh;
+
+            padding:
+                120px 7vw;
+
+            background:
+
+                linear-gradient(
+                    180deg,
+                    #02070d,
+                    #030c14
+                );
+
+            border-top:
+                1px solid
+                rgba(46, 160, 220, 0.10);
+
+            z-index:
+                30;
+
+        }
+
+
+        .section-inner {
+
+            width:
+                min(
+                    1200px,
+                    100%
+                );
+
+            margin:
+                0 auto;
+
+        }
+
+
+        .section-label {
+
+            font-size:
+                12px;
+
+            letter-spacing:
+                4px;
+
+            color:
+                var(--cyan);
+
+            margin-bottom:
+                18px;
+
+        }
+
+
+        .section-title {
+
+            font-size:
+                44px;
+
+            font-weight:
+                300;
+
+            letter-spacing:
+                3px;
+
+            color:
+                #edf4f8;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        .section-description {
+
+            max-width:
+                820px;
+
+            margin-top:
+                25px;
+
+            font-size:
+                17px;
+
+            line-height:
+                1.8;
+
+            color:
+                rgba(211, 224, 233, 0.68);
+
+        }
+
+
+        /* =========================================================
+           GLASS CARDS
+        ========================================================= */
+
+        .glass-grid {
+
+            margin-top:
+                60px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap:
+                22px;
+
+        }
+
+
+        .glass-card {
+
+            min-height:
+                210px;
+
+            padding:
+                32px;
+
+            background:
+                rgba(7, 23, 36, 0.58);
+
+            border:
+                1px solid
+                rgba(45, 161, 220, 0.20);
+
+            backdrop-filter:
+                blur(14px);
+
+            transition:
+
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                box-shadow 0.25s ease;
+
+        }
+
+
+        .glass-card:hover {
+
+            transform:
+                translateY(-5px);
+
+            border-color:
+                rgba(50, 180, 255, 0.48);
+
+            box-shadow:
+                0 15px 45px
+                rgba(0, 120, 220, 0.10);
+
+        }
+
+
+        .card-number {
+
+            font-size:
+                11px;
+
+            letter-spacing:
+                2px;
+
+            color:
+                rgba(56, 184, 255, 0.70);
+
+        }
+
+
+        .glass-card h3 {
+
+            margin-top:
+                20px;
+
+            font-size:
+                20px;
+
+            font-weight:
+                500;
+
+            letter-spacing:
+                1px;
+
+        }
+
+
+        .glass-card p {
+
+            margin-top:
+                14px;
+
+            font-size:
+                14px;
+
+            line-height:
+                1.65;
+
+            color:
+                rgba(207, 221, 230, 0.65);
+
+        }
+
+
+        /* =========================================================
+           ARCHITECTURE
+        ========================================================= */
+
+        .architecture-flow {
+
+            margin-top:
+                60px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                9px;
+
+        }
+
+
+        .architecture-node {
+
+            padding:
+                17px 19px;
+
+            background:
+                rgba(5, 25, 40, 0.62);
+
+            border:
+                1px solid
+                rgba(38, 162, 230, 0.32);
+
+            color:
+                rgba(231, 240, 247, 0.84);
+
+            font-size:
+                11px;
+
+            letter-spacing:
+                1px;
+
+            backdrop-filter:
+                blur(12px);
+
+        }
+
+
+        .architecture-arrow {
+
+            color:
+                var(--cyan);
+
+            font-size:
+                19px;
+
+        }
+
+
+        /* =========================================================
+           CONTACT
+        ========================================================= */
+
+        .contact-box {
+
+            margin-top:
+                55px;
+
+            padding:
+                50px;
+
+            text-align:
+                center;
+
+            background:
+                rgba(6, 22, 35, 0.55);
+
+            border:
+                1px solid
+                rgba(43, 170, 235, 0.22);
+
+            backdrop-filter:
+                blur(16px);
+
+        }
+
+
+        .contact-box h3 {
+
+            font-size:
+                22px;
+
+            letter-spacing:
+                2px;
+
+        }
+
+
+        .contact-box p {
+
+            margin-top:
+                14px;
+
+            color:
+                rgba(210, 222, 230, 0.66);
+
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+
+            position:
+                relative;
+
+            z-index:
+                40;
+
+            padding:
+                35px 7vw;
+
+            background:
+                #010307;
+
+            border-top:
+                1px solid
+                rgba(50, 150, 210, 0.12);
+
+            text-align:
+                center;
+
+            font-size:
+                11px;
+
+            letter-spacing:
+                1px;
+
+            color:
+                rgba(190, 205, 215, 0.50);
+
+        }
+
+
+        /* =========================================================
+           MOBILE MENU
+        ========================================================= */
+
+        .mobile-menu {
+
+            display:
+                none;
+
+            margin-left:
+                auto;
+
+            width:
+                42px;
+
+            height:
+                42px;
+
+            cursor:
+                pointer;
+
+            color:
+                var(--cyan);
+
+            background:
+                rgba(5, 20, 32, 0.72);
+
+            border:
+                1px solid
+                rgba(50, 175, 240, 0.35);
+
+            font-size:
+                20px;
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 1250px) {
+
+            .nav-links {
+
+                gap:
+                    25px;
+
+            }
+
+
+            .nav-link {
+
+                font-size:
+                    13px;
+
+            }
+
+
+            .system-status {
+
+                width:
+                    190px;
+
+            }
+
+
+            .hero-content {
+
+                width:
+                    calc(100% - 70px);
+
+            }
+
+
+            .hero-left {
+
+                width:
+                    56%;
+
+            }
+
+
+            .hero-logo {
+
+                width:
+                    100%;
+
+            }
+
+
+            .hero-title {
+
+                font-size:
+                    33px;
+
+            }
+
+
+            .hero-description {
+
+                width:
+                    100%;
+
+            }
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .navbar {
+
+                top:
+                    20px;
+
+                left:
+                    18px;
+
+                right:
+                    18px;
+
+            }
+
+
+            .nav-links,
+            .system-status {
+
+                display:
+                    none;
+
+            }
+
+
+            .mobile-menu {
+
+                display:
+                    block;
+
+            }
+
+
+            .hero {
+
+                min-height:
+                    900px;
+
+                align-items:
+                    flex-start;
+
+            }
+
+
+            .hero-content {
+
+                padding-top:
+                    175px;
+
+            }
+
+
+            .hero-left {
+
+                width:
+                    100%;
+
+            }
+
+
+            .hero-logo {
+
+                max-width:
+                    520px;
+
+            }
+
+
+            .hero-title {
+
+                font-size:
+                    31px;
+
+            }
+
+
+            .hero-divider {
+
+                width:
+                    100%;
+
+            }
+
+
+            .hero-description {
+
+                max-width:
+                    620px;
+
+            }
+
+
+            .hero-actions {
+
+                flex-wrap:
+                    wrap;
+
+            }
+
+
+            .security-statement {
+
+                left:
+                    30px;
+
+                bottom:
+                    35px;
+
+            }
+
+
+            .glass-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar {
+
+                height:
+                    65px;
+
+            }
+
+
+            .nav-logo img {
+
+                width:
+                    135px;
+
+            }
+
+
+            .hero {
+
+                min-height:
+                    850px;
+
+            }
+
+
+            .hero-content {
+
+                width:
+                    calc(100% - 40px);
+
+                padding-top:
+                    145px;
+
+            }
+
+
+            .hero-subtitle {
+
+                font-size:
+                    10px;
+
+                letter-spacing:
+                    2px;
+
+                white-space:
+                    normal;
+
+                line-height:
+                    1.6;
+
+            }
+
+
+            .hero-title {
+
+                font-size:
+                    25px;
+
+                letter-spacing:
+                    2px;
+
+            }
+
+
+            .hero-description {
+
+                font-size:
+                    14px;
+
+            }
+
+
+            .hero-actions {
+
+                width:
+                    100%;
+
+                flex-direction:
+                    column;
+
+            }
+
+
+            .cta,
+            .cta-primary,
+            .cta-secondary {
+
+                width:
+                    100%;
+
+            }
+
+
+            .security-statement {
+
+                display:
+                    none;
+
+            }
+
+
+            .scroll-indicator {
+
+                display:
+                    none;
+
+            }
+
+
+            .section {
+
+                padding:
+                    90px 25px;
+
+            }
+
+
+            .section-title {
+
+                font-size:
+                    31px;
+
+            }
+
+
+            .architecture-node {
+
+                width:
+                    100%;
+
+                text-align:
+                    center;
+
+            }
+
+
+            .architecture-arrow {
+
+                transform:
+                    rotate(90deg);
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         MATRIX RAIN
+    ========================================================== -->
+
+    <canvas
+        id="matrixCanvas"
+        aria-hidden="true"
+    ></canvas>
+
+
+    <!-- GLOBAL LIGHT -->
+    <div
+        class="global-glow"
+        aria-hidden="true"
+    ></div>
+
+
+    <!-- =========================================================
+         NAVIGATION
+    ========================================================== -->
+
+    <header class="navbar">
+
+
+        <!-- LOGO -->
+
+        <a
+            href="#home"
+            class="nav-logo"
+            aria-label="RFGN Home"
+        >
+
+            <img
+                src="assets/RFGN_logo_reference.png"
+                alt="RFGN"
+            >
+
+        </a>
+
+
+        <!-- LINKS -->
+
+        <nav class="nav-links">
+
+            <a
+                href="#home"
+                class="nav-link active"
+            >
+                HOME
+            </a>
+
+            <a
+                href="#about"
+                class="nav-link"
+            >
+                ABOUT RFGN
+            </a>
+
+            <a
+                href="#technology"
+                class="nav-link"
+            >
+                TECHNOLOGY
+            </a>
+
+            <a
+                href="#architecture"
+                class="nav-link"
+            >
+                ARCHITECTURE
+            </a>
+
+            <a
+                href="#features"
+                class="nav-link"
+            >
+                FEATURES
+            </a>
+
+            <a
+                href="#contact"
+                class="nav-link"
+            >
+                CONTACT
+            </a>
+
+        </nav>
+
+
+        <!-- SYSTEM STATUS -->
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            <div class="status-content">
+
+                <span class="status-label">
+                    SYSTEM STATUS
+                </span>
+
+                <span class="status-value">
+                    OPERATIONAL
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- MOBILE -->
+
+        <button
+            class="mobile-menu"
+            id="mobileMenu"
+            aria-label="Open navigation"
+        >
+            ☰
+        </button>
+
+    </header>
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================== -->
+
+    <main>
+
+
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
+
+        <section
+            id="home"
+            class="hero"
+        >
+
+
+            <!-- EARTH BACKGROUND -->
+
+            <div
+                class="hero-background"
+                aria-hidden="true"
+            ></div>
+
+
+            <!-- DARK OVERLAY -->
+
+            <div
+                class="hero-overlay"
+                aria-hidden="true"
+            ></div>
+
+
+            <div
+                class="hero-bottom-overlay"
+                aria-hidden="true"
+            ></div>
+
+
+            <!-- HERO CONTENT -->
+
+            <div class="hero-content">
+
+
+                <div class="hero-left">
+
+
+                    <!-- HERO LOGO -->
+
+                    <img
+                        class="hero-logo"
+                        src="assets/RFGN_logo_reference.png"
+                        alt="RFGN — Reinforced Federated Graph Network"
+                    >
+
+
+                    <!-- SUBTITLE -->
+
+                    <div class="hero-subtitle">
+
+                        REINFORCED FEDERATED GRAPH NETWORK
+
+                    </div>
+
+
+                    <!-- HEADLINE -->
+
+                    <h1 class="hero-title">
+
+                        INTELLIGENCE BEYOND
+
+                        <strong>
+                            CONNECTIONS
+                        </strong>
+
+                    </h1>
+
+
+                    <!-- DIVIDER -->
+
+                    <div
+                        class="hero-divider"
+                        aria-hidden="true"
+                    ></div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <p class="hero-description">
+
+                        Leveraging Graph Neural Networks,
+                        Federated Learning and Reinforcement
+                        Learning to detect fraud in real-time
+                        with adaptive intelligence across
+                        decentralized networks.
+
+                    </p>
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="hero-actions">
+
+
+                        <button
+                            class="cta cta-primary"
+                            id="exploreButton"
+                        >
+
+                            <span class="cta-arrow">
+                                »»
+                            </span>
+
+                            <span>
+                                EXPLORE RFGN PLATFORM
+                            </span>
+
+                            <span class="cta-arrow">
+                                →
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="cta cta-secondary"
+                            id="watchButton"
+                        >
+
+                            <span class="play-icon">
+                                ▶
+                            </span>
+
+                            <span>
+                                WATCH OVERVIEW
+                            </span>
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY -->
+
+            <div class="security-statement">
+
+                <span class="security-icon">
+                    ✓
+                </span>
+
+                <span>
+                    SECURE.
+                </span>
+
+                <span class="security-private">
+                    PRIVATE.
+                </span>
+
+                <span>
+                    INTELLIGENT.
+                </span>
+
+            </div>
+
+
+            <!-- SCROLL -->
+
+            <div class="scroll-indicator">
+
+                <span>
+                    SCROLL TO EXPLORE
+                </span>
+
+                <div class="mouse"></div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================================
+             ABOUT
+        ====================================================== -->
+
+        <section
+            id="about"
+            class="section"
+        >
+
+            <div class="section-inner">
+
+                <div class="section-label">
+                    01 / ABOUT RFGN
+                </div>
+
+                <h2 class="section-title">
+                    Intelligence Beyond Connections
+                </h2>
+
+                <p class="section-description">
+
+                    RFGN — Reinforced Federated Graph Network
+                    is an intelligent fraud detection architecture
+                    combining Graph Neural Networks, Federated
+                    Learning and Reinforcement Learning to analyze
+                    financial transaction relationships across
+                    decentralized networks.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TECHNOLOGY
+        ====================================================== -->
+
+        <section
+            id="technology"
+            class="section"
+        >
+
+            <div class="section-inner">
+
+                <div class="section-label">
+                    02 / TECHNOLOGY
+                </div>
+
+                <h2 class="section-title">
+                    Three Intelligence Layers
+                </h2>
+
+
+                <div class="glass-grid">
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            01 / GRAPH AI
+                        </div>
+
+                        <h3>
+                            GRAPHSAGE
+                        </h3>
+
+                        <p>
+
+                            GraphSAGE processes transaction
+                            relationships and node features
+                            to produce fraud probabilities
+                            from graph-structured financial data.
+
+                        </p>
+
+                    </article>
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            02 / FEDERATED AI
+                        </div>
+
+                        <h3>
+                            FEDERATED LEARNING
+                        </h3>
+
+                        <p>
+
+                            Multiple clients participate in
+                            decentralized training while the
+                            global model is produced through
+                            federated aggregation.
+
+                        </p>
+
+                    </article>
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            03 / REINFORCEMENT AI
+                        </div>
+
+                        <h3>
+                            DQN
+                        </h3>
+
+                        <p>
+
+                            The DQN decision layer selects
+                            the fraud detection threshold
+                            used by the deployed inference
+                            pipeline.
+
+                        </p>
+
+                    </article>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ARCHITECTURE
+        ====================================================== -->
+
+        <section
+            id="architecture"
+            class="section"
+        >
+
+            <div class="section-inner">
+
+                <div class="section-label">
+                    03 / ARCHITECTURE
+                </div>
+
+                <h2 class="section-title">
+                    RFGN Intelligence Pipeline
+                </h2>
+
+                <p class="section-description">
+
+                    A complete flow from financial transaction
+                    data to graph-based inference and final
+                    reinforcement-learning decision.
+
+                </p>
+
+
+                <div class="architecture-flow">
+
+
+                    <div class="architecture-node">
+                        DATA
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        PREPROCESSING
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        NON-IID CLIENTS
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        GRAPH
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        GRAPHSAGE
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        FEDAVG
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        GLOBAL MODEL
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        DQN
+                    </div>
+
+                    <span class="architecture-arrow">
+                        →
+                    </span>
+
+
+                    <div class="architecture-node">
+                        DECISION
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FEATURES
+        ====================================================== -->
+
+        <section
+            id="features"
+            class="section"
+        >
+
+            <div class="section-inner">
+
+                <div class="section-label">
+                    04 / FEATURES
+                </div>
+
+                <h2 class="section-title">
+                    Intelligent Fraud Detection
+                </h2>
+
+
+                <div class="glass-grid">
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            FEATURE 01
+                        </div>
+
+                        <h3>
+                            REAL-TIME DETECTION
+                        </h3>
+
+                        <p>
+                            Analyze incoming transactions
+                            through the RFGN inference pipeline.
+                        </p>
+
+                    </article>
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            FEATURE 02
+                        </div>
+
+                        <h3>
+                            GRAPH INTELLIGENCE
+                        </h3>
+
+                        <p>
+                            Use transaction relationships
+                            and graph structure for fraud analysis.
+                        </p>
+
+                    </article>
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            FEATURE 03
+                        </div>
+
+                        <h3>
+                            FEDERATED TRAINING
+                        </h3>
+
+                        <p>
+                            Support decentralized client
+                            training and global model aggregation.
+                        </p>
+
+                    </article>
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            FEATURE 04
+                        </div>
+
+                        <h3>
+                            ADAPTIVE DECISION
+                        </h3>
+
+                        <p>
+                            DQN provides the decision-layer
+                            threshold used by the deployed
+                            inference pipeline.
+                        </p>
+
+                    </article>
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            FEATURE 05
+                        </div>
+
+                        <h3>
+                            TRANSACTION HISTORY
+                        </h3>
+
+                        <p>
+                            Store and retrieve transaction
+                            detection results through the
+                            RFGN database.
+                        </p>
+
+                    </article>
+
+
+                    <article class="glass-card">
+
+                        <div class="card-number">
+                            FEATURE 06
+                        </div>
+
+                        <h3>
+                            SECURITY ALERTS
+                        </h3>
+
+                        <p>
+                            Surface high-risk detection
+                            results through the user and
+                            administrator interfaces.
+                        </p>
+
+                    </article>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CONTACT
+        ====================================================== -->
+
+        <section
+            id="contact"
+            class="section"
+        >
+
+            <div class="section-inner">
+
+                <div class="section-label">
+                    05 / CONTACT
+                </div>
+
+                <h2 class="section-title">
+                    RFGN Research Platform
+                </h2>
+
+
+                <div class="contact-box">
+
+                    <h3>
+                        REINFORCED FEDERATED GRAPH NETWORK
+                    </h3>
+
+                    <p>
+                        AI-driven graph intelligence for
+                        decentralized financial fraud detection.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer>
+
+        RFGN © 2026 — REINFORCED FEDERATED GRAPH NETWORK
+
+    </footer>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+
+
+        /* =========================================================
+           MATRIX RAIN
+        ========================================================= */
+
+        const canvas =
+            document.getElementById(
+                "matrixCanvas"
+            );
+
+        const ctx =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        let width = 0;
+        let height = 0;
+
+        let columns = 0;
+
+        let drops = [];
+
+        let speeds = [];
+
+        const fontSize = 14;
+
+        const characters =
+            "01RFGN<>[]{}";
+
+
+        function resizeMatrix() {
+
+            width =
+                window.innerWidth;
+
+            height =
+                window.innerHeight;
+
+
+            canvas.width =
+                width;
+
+            canvas.height =
+                height;
+
+
+            columns =
+                Math.ceil(
+                    width / fontSize
+                );
+
+
+            drops =
+                [];
+
+            speeds =
+                [];
+
+
+            for (
+                let i = 0;
+                i < columns;
+                i++
+            ) {
+
+                drops[i] =
+                    Math.random() *
+                    -100;
+
+                speeds[i] =
+                    0.35 +
+                    Math.random() *
+                    0.75;
+
+            }
+
+        }
+
+
+        function drawMatrix() {
+
+            ctx.fillStyle =
+                "rgba(0, 0, 0, 0.065)";
+
+            ctx.fillRect(
+                0,
+                0,
+                width,
+                height
+            );
+
+
+            ctx.font =
+                `${fontSize}px monospace`;
+
+
+            for (
+                let i = 0;
+                i < columns;
+                i++
+            ) {
+
+
+                const char =
+                    characters[
+                        Math.floor(
+                            Math.random() *
+                            characters.length
+                        )
+                    ];
+
+
+                const x =
+                    i * fontSize;
+
+                const y =
+                    drops[i] *
+                    fontSize;
+
+
+                const bright =
+                    Math.random() >
+                    0.94;
+
+
+                if (bright) {
+
+                    ctx.fillStyle =
+                        "rgba(30,255,135,0.88)";
+
+                } else {
+
+                    ctx.fillStyle =
+                        "rgba(0,210,95,0.38)";
+
+                }
+
+
+                ctx.fillText(
+                    char,
+                    x,
+                    y
+                );
+
+
+                drops[i] +=
+                    speeds[i];
+
+
+                if (
+                    y > height &&
+                    Math.random() > 0.975
+                ) {
+
+                    drops[i] =
+                        Math.random() *
+                        -35;
+
+                }
+
+            }
+
+
+            requestAnimationFrame(
+                drawMatrix
+            );
+
+        }
+
+
+        resizeMatrix();
+
+        window.addEventListener(
+            "resize",
+            resizeMatrix
+        );
+
+
+        requestAnimationFrame(
+            drawMatrix
+        );
+
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================= */
+
+        const navLinks =
+            document.querySelectorAll(
+                ".nav-link"
+            );
+
+
+        navLinks.forEach(
+            link => {
+
+                link.addEventListener(
+                    "click",
+                    () => {
+
+                        navLinks.forEach(
+                            item =>
+                                item.classList.remove(
+                                    "active"
+                                )
+                        );
+
+
+                        link.classList.add(
+                            "active"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =========================================================
+           ACTIVE NAVIGATION ON SCROLL
+        ========================================================= */
+
+        const pageSections =
+            document.querySelectorAll(
+                "section[id]"
+            );
+
+
+        const sectionObserver =
+            new IntersectionObserver(
+                entries => {
+
+                    entries.forEach(
+                        entry => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                const currentId =
+                                    entry.target.id;
+
+
+                                navLinks.forEach(
+                                    link => {
+
+                                        link.classList.remove(
+                                            "active"
+                                        );
+
+
+                                        if (
+                                            link.getAttribute(
+                                                "href"
+                                            ) ===
+                                            `#${currentId}`
+                                        ) {
+
+                                            link.classList.add(
+                                                "active"
+                                            );
+
+                                        }
+
+                                    }
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold:
+                        0.35
+                }
+            );
+
+
+        pageSections.forEach(
+            section =>
+                sectionObserver.observe(
+                    section
+                )
+        );
+
+
+        /* =========================================================
+           EXPLORE PLATFORM
+        ========================================================= */
+
+        document
+            .getElementById(
+                "exploreButton"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    /*
+                       Login page will be connected later.
+                    */
+
+                    window.location.href =
+                        "login.html";
+
+                }
+            );
+
+
+        /* =========================================================
+           WATCH OVERVIEW
+        ========================================================= */
+
+        document
+            .getElementById(
+                "watchButton"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    window.location.href =
+                        "#about";
+
+                }
+            );
+
+
+        /* =========================================================
+           MOBILE MENU
+        ========================================================= */
+
+        document
+            .getElementById(
+                "mobileMenu"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    alert(
+                        "RFGN navigation menu"
+                    );
+
+                }
+            );
+
+
+    </script>
+
+
+</body>
+
+</html>
